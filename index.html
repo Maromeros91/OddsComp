@@ -54,21 +54,33 @@
 
     <!-- SECCIÓN 1: COMPARADOR DE BOOKS -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         <div class="flex items-center space-x-3">
           <div class="p-2.5 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20">
             <i class="fa-solid fa-code-compare text-xl"></i>
           </div>
           <div>
             <h2 class="text-xl font-bold text-slate-100">1. Comparador entre Sportsbooks</h2>
-            <p class="text-xs text-slate-400">Calcula la apuesta necesaria para que tu Ganancia Neta Real depositada en el banco sea exacta</p>
+            <p class="text-xs text-slate-400">Compara según ganancia objetivo o según una cantidad de apuesta fija</p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 p-2 rounded-xl">
-          <label class="text-xs font-medium text-slate-400 pl-2">Ganancia Neta Deseada (To Win): $</label>
-          <input type="number" id="desiredWin" value="100" step="0.01" oninput="compareBooks()" 
-            class="w-28 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 font-bold focus:ring-2 focus:ring-cyan-500 outline-none text-right">
+        <!-- CONTROL DE MODO DE CÁLCULO -->
+        <div class="flex flex-wrap items-center gap-3 bg-slate-950 border border-slate-800 p-2 rounded-xl">
+          <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+            <button id="btnModeToWin" onclick="setCalcMode('toWin')" class="px-3 py-1 rounded-md text-xs font-bold transition bg-cyan-500 text-slate-950 shadow">
+              Por Ganancia (To Win)
+            </button>
+            <button id="btnModeBet" onclick="setCalcMode('bet')" class="px-3 py-1 rounded-md text-xs font-bold text-slate-400 hover:text-slate-200 transition">
+              Por Apuesta Fija (Bet)
+            </button>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <label id="inputLabel" class="text-xs font-medium text-slate-400 pl-1">Ganancia Neta Deseada: $</label>
+            <input type="number" id="calcInputValue" value="250" step="1" oninput="compareBooks()" 
+              class="w-28 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 font-bold focus:ring-2 focus:ring-cyan-500 outline-none text-right">
+          </div>
         </div>
       </div>
 
@@ -83,11 +95,12 @@
               <span class="text-[10px] bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-800">Sin Comisión</span>
             </div>
             <label class="block text-xs text-slate-400 mb-1">Momio Ofertado</label>
-            <input type="number" id="odds_caliente" value="100" oninput="compareBooks()" 
+            <input type="number" id="odds_caliente" value="-110" oninput="compareBooks()" 
               class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 font-mono text-sm focus:ring-1 focus:ring-red-500 outline-none">
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_caliente" class="font-semibold text-slate-200">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_caliente" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_caliente" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -100,12 +113,13 @@
               <span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded border border-pink-800" title="Cobro de 1% sobre saldo al retirar">1% Com. Retiro</span>
             </div>
             <label class="block text-xs text-slate-400 mb-1">Momio Ofertado</label>
-            <input type="number" id="odds_playdoit" value="100" oninput="compareBooks()" 
+            <input type="number" id="odds_playdoit" value="-108" oninput="compareBooks()" 
               class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 font-mono text-sm focus:ring-1 focus:ring-pink-500 outline-none">
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_playdoit" class="font-semibold text-slate-200">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Saldo en App:</span> <span id="gross_playdoit" class="font-semibold text-slate-500">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_playdoit" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retiro Neto Banco:</span> <span id="total_playdoit" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -118,11 +132,12 @@
               <span class="text-[10px] bg-blue-950 text-blue-300 px-2 py-0.5 rounded border border-blue-800">Sin Comisión</span>
             </div>
             <label class="block text-xs text-slate-400 mb-1">Momio Ofertado</label>
-            <input type="number" id="odds_novibet" value="100" oninput="compareBooks()" 
+            <input type="number" id="odds_novibet" value="-110" oninput="compareBooks()" 
               class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 font-mono text-sm focus:ring-1 focus:ring-blue-500 outline-none">
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_novibet" class="font-semibold text-slate-200">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_novibet" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_novibet" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -135,11 +150,12 @@
               <span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800">Sin Comisión</span>
             </div>
             <label class="block text-xs text-slate-400 mb-1">Momio Ofertado</label>
-            <input type="number" id="odds_hardrock" value="100" oninput="compareBooks()" 
+            <input type="number" id="odds_hardrock" value="-110" oninput="compareBooks()" 
               class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 font-mono text-sm focus:ring-1 focus:ring-amber-500 outline-none">
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_hardrock" class="font-semibold text-slate-200">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_hardrock" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_hardrock" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -158,8 +174,8 @@
           </div>
         </div>
         <div class="text-right">
-          <span class="text-xs text-slate-400 block">Menor Riesgo Requerido (Bet)</span>
-          <span id="bestBookBet" class="text-xl font-bold text-emerald-400">$0.00</span>
+          <span id="bestBookLabel" class="text-xs text-slate-400 block">Menor Riesgo Requerido (Bet)</span>
+          <span id="bestBookValue" class="text-xl font-bold text-emerald-400">$0.00</span>
         </div>
       </div>
 
@@ -175,7 +191,7 @@
         </div>
         <div>
           <h2 class="text-xl font-bold text-slate-100">2. Cálculo de Odds Reales</h2>
-          <p class="text-xs text-slate-400">Determina el momio americano exacto en función de la apuesta y ganancia proyectada</p>
+          <p class="text-xs text-slate-400">Ingresa la cantidad apostada y la cantidad a ganar para obtener los odds reales exactos</p>
         </div>
       </div>
 
@@ -185,7 +201,7 @@
             <label class="block text-xs font-medium text-slate-400 mb-1">Monto Apostado (Bet)</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">$</span>
-              <input type="number" id="realBet" value="106" oninput="calculateRealOdds()" 
+              <input type="number" id="realBet" value="106" step="0.01" oninput="calculateRealOdds()" 
                 class="w-full pl-7 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-slate-100 transition">
             </div>
           </div>
@@ -206,7 +222,7 @@
             -105.263
           </div>
           <p id="realOddsSub" class="text-xs text-slate-400">
-            Implica que necesitas apostar <span class="text-slate-200 font-semibold">$105.26</span> para ganar <span class="text-slate-200 font-semibold">$100</span>
+            Implica que necesitas apostar <span class="text-slate-200 font-semibold" id="subBet">$106.00</span> para ganar <span class="text-slate-200 font-semibold" id="subWin">$100.70</span>
           </p>
         </div>
       </div>
@@ -215,11 +231,35 @@
   </div>
 
   <script>
+    let calcMode = 'toWin'; // 'toWin' o 'bet'
+
+    function setCalcMode(mode) {
+      calcMode = mode;
+      const btnToWin = document.getElementById('btnModeToWin');
+      const btnBet = document.getElementById('btnModeBet');
+      const inputLabel = document.getElementById('inputLabel');
+
+      if (mode === 'toWin') {
+        btnToWin.className = 'px-3 py-1 rounded-md text-xs font-bold transition bg-cyan-500 text-slate-950 shadow';
+        btnBet.className = 'px-3 py-1 rounded-md text-xs font-bold text-slate-400 hover:text-slate-200 transition';
+        inputLabel.innerText = 'Ganancia Neta Deseada: $';
+      } else {
+        btnBet.className = 'px-3 py-1 rounded-md text-xs font-bold transition bg-cyan-500 text-slate-950 shadow';
+        btnToWin.className = 'px-3 py-1 rounded-md text-xs font-bold text-slate-400 hover:text-slate-200 transition';
+        inputLabel.innerText = 'Monto Apuesta Fija (Bet): $';
+      }
+      compareBooks();
+    }
+
     function calculateRealOdds() {
-      const bet = parseFloat(document.getElementById('realBet').value) || 0;
-      const win = parseFloat(document.getElementById('realWin').value) || 0;
+      const betElem = document.getElementById('realBet');
+      const winElem = document.getElementById('realWin');
       const display = document.getElementById('realOddsDisplay');
-      const sub = document.getElementById('realOddsSub');
+      const subBet = document.getElementById('subBet');
+      const subWin = document.getElementById('subWin');
+
+      let bet = parseFloat(betElem.value) || 0;
+      let win = parseFloat(winElem.value) || 0;
 
       if (bet <= 0 || win <= 0) {
         display.innerText = "---";
@@ -235,11 +275,12 @@
         display.innerText = odds.toFixed(3);
       }
 
-      sub.innerHTML = `Implica que necesitas apostar <span class="text-slate-200 font-semibold">$${bet.toFixed(2)}</span> para ganar <span class="text-slate-200 font-semibold">$${win.toFixed(2)}</span>`;
+      subBet.innerText = `$${bet.toFixed(2)}`;
+      subWin.innerText = `$${win.toFixed(2)}`;
     }
 
     function compareBooks() {
-      const targetWin = parseFloat(document.getElementById('desiredWin').value) || 0;
+      const inputValue = parseFloat(document.getElementById('calcInputValue').value) || 0;
 
       const books = [
         { id: 'caliente', name: 'Caliente', fee: 0 },
@@ -253,10 +294,12 @@
       books.forEach(book => {
         const oddsInput = parseFloat(document.getElementById(`odds_${book.id}`).value);
         const betElem = document.getElementById(`bet_${book.id}`);
+        const winElem = document.getElementById(`win_${book.id}`);
         const totalElem = document.getElementById(`total_${book.id}`);
 
-        if (isNaN(oddsInput) || oddsInput === 0 || targetWin <= 0) {
+        if (isNaN(oddsInput) || oddsInput === 0 || inputValue <= 0) {
           betElem.innerText = '$0.00';
+          winElem.innerText = '$0.00';
           totalElem.innerText = '$0.00';
           if (book.id === 'playdoit') {
             document.getElementById('gross_playdoit').innerText = '$0.00';
@@ -265,56 +308,88 @@
         }
 
         let requiredBet = 0;
+        let netWin = 0;
         let grossReturn = 0;
         let netReturn = 0;
 
-        if (book.id === 'playdoit') {
-          // PlayDoIt: Ganancia Neta en Banco = Retiro Neto - Bet = targetWin
-          // Retiro Neto = Saldo App * 0.99 = Bet * MultiplicadorDecimal * 0.99
-          // Bet * (0.99 * MultiplicadorDecimal - 1) = targetWin
-          
-          let decMultiplier = oddsInput > 0 ? (1 + oddsInput / 100) : (1 + 100 / Math.abs(oddsInput));
-          
-          requiredBet = targetWin / ((0.99 * decMultiplier) - 1);
-          grossReturn = requiredBet * decMultiplier;
-          netReturn = grossReturn * 0.99;
+        let decMultiplier = oddsInput > 0 ? (1 + oddsInput / 100) : (1 + 100 / Math.abs(oddsInput));
 
-          document.getElementById('gross_playdoit').innerText = `$${grossReturn.toFixed(2)}`;
-        } else {
-          // Books sin comisión
-          if (oddsInput > 0) {
-            requiredBet = (targetWin * 100) / oddsInput;
+        if (calcMode === 'toWin') {
+          // MODALIDAD 1: Fijamos la Ganancia Neta Deseada
+          netWin = inputValue;
+
+          if (book.id === 'playdoit') {
+            requiredBet = netWin / ((0.99 * decMultiplier) - 1);
+            grossReturn = requiredBet * decMultiplier;
+            netReturn = grossReturn * 0.99;
           } else {
-            requiredBet = (targetWin * Math.abs(oddsInput)) / 100;
+            if (oddsInput > 0) {
+              requiredBet = (netWin * 100) / oddsInput;
+            } else {
+              requiredBet = (netWin * Math.abs(oddsInput)) / 100;
+            }
+            grossReturn = requiredBet + netWin;
+            netReturn = grossReturn;
           }
-          grossReturn = requiredBet + targetWin;
-          netReturn = grossReturn;
+        } else {
+          // MODALIDAD 2: Fijamos el Monto de Apuesta Fijo (Bet)
+          requiredBet = inputValue;
+
+          if (book.id === 'playdoit') {
+            grossReturn = requiredBet * decMultiplier;
+            netReturn = grossReturn * 0.99;
+            netWin = netReturn - requiredBet;
+          } else {
+            grossReturn = requiredBet * decMultiplier;
+            netReturn = grossReturn;
+            netWin = netReturn - requiredBet;
+          }
         }
 
         betElem.innerText = `$${requiredBet.toFixed(2)}`;
+        winElem.innerText = `$${netWin.toFixed(2)}`;
         totalElem.innerText = `$${netReturn.toFixed(2)}`;
+
+        if (book.id === 'playdoit') {
+          document.getElementById('gross_playdoit').innerText = `$${grossReturn.toFixed(2)}`;
+        }
 
         if (requiredBet > 0) {
           calculatedBooks.push({
             name: book.name,
-            bet: requiredBet
+            bet: requiredBet,
+            win: netWin
           });
         }
       });
 
       const bestNameElem = document.getElementById('bestBookName');
-      const bestBetElem = document.getElementById('bestBookBet');
+      const bestLabelElem = document.getElementById('bestBookLabel');
+      const bestValueElem = document.getElementById('bestBookValue');
 
       if (calculatedBooks.length > 0) {
-        let minBet = Math.min(...calculatedBooks.map(b => b.bet));
-        let bestBooks = calculatedBooks.filter(b => Math.abs(b.bet - minBet) < 0.001);
-        let names = bestBooks.map(b => b.name).join(" / ");
-        
-        bestNameElem.innerText = names;
-        bestBetElem.innerText = `$${minBet.toFixed(2)} en Riesgo`;
+        if (calcMode === 'toWin') {
+          // Buscamos el menor riesgo (Bet)
+          let minBet = Math.min(...calculatedBooks.map(b => b.bet));
+          let bestBooks = calculatedBooks.filter(b => Math.abs(b.bet - minBet) < 0.001);
+          let names = bestBooks.map(b => b.name).join(" / ");
+
+          bestNameElem.innerText = names;
+          bestLabelElem.innerText = "Menor Riesgo Requerido (Bet)";
+          bestValueElem.innerText = `$${minBet.toFixed(2)} en Riesgo`;
+        } else {
+          // Buscamos la mayor ganancia neta (Win)
+          let maxWin = Math.max(...calculatedBooks.map(b => b.win));
+          let bestBooks = calculatedBooks.filter(b => Math.abs(b.win - maxWin) < 0.001);
+          let names = bestBooks.map(b => b.name).join(" / ");
+
+          bestNameElem.innerText = names;
+          bestLabelElem.innerText = "Mayor Ganancia Neta Real";
+          bestValueElem.innerText = `$${maxWin.toFixed(2)} Ganados`;
+        }
       } else {
         bestNameElem.innerText = "N/A";
-        bestBetElem.innerText = "$0.00";
+        bestValueElem.innerText = "$0.00";
       }
     }
 
