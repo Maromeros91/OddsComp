@@ -100,7 +100,7 @@
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_caliente" class="font-semibold text-slate-200">$0.00</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_caliente" class="font-semibold text-emerald-400">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta:</span> <span id="win_caliente" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_caliente" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -119,7 +119,7 @@
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_playdoit" class="font-semibold text-slate-200">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Saldo en App:</span> <span id="gross_playdoit" class="font-semibold text-slate-500">$0.00</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_playdoit" class="font-semibold text-emerald-400">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta:</span> <span id="win_playdoit" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retiro Neto Banco:</span> <span id="total_playdoit" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -137,7 +137,7 @@
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_novibet" class="font-semibold text-slate-200">$0.00</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_novibet" class="font-semibold text-emerald-400">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta:</span> <span id="win_novibet" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_novibet" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -155,7 +155,7 @@
           </div>
           <div class="pt-2 border-t border-slate-900 space-y-1">
             <div class="flex justify-between text-xs"><span class="text-slate-500">Monto Apuesta (Bet):</span> <span id="bet_hardrock" class="font-semibold text-slate-200">$0.00</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta Banco:</span> <span id="win_hardrock" class="font-semibold text-emerald-400">$0.00</span></div>
+            <div class="flex justify-between text-xs"><span class="text-slate-500">Ganancia Neta:</span> <span id="win_hardrock" class="font-semibold text-emerald-400">$0.00</span></div>
             <div class="flex justify-between text-xs"><span class="text-slate-500">Retorno Total:</span> <span id="total_hardrock" class="font-semibold text-slate-400">$0.00</span></div>
           </div>
         </div>
@@ -231,7 +231,7 @@
   </div>
 
   <script>
-    let calcMode = 'toWin'; // 'toWin' o 'bet'
+    let calcMode = 'toWin';
 
     function setCalcMode(mode) {
       calcMode = mode;
@@ -315,7 +315,6 @@
         let decMultiplier = oddsInput > 0 ? (1 + oddsInput / 100) : (1 + 100 / Math.abs(oddsInput));
 
         if (calcMode === 'toWin') {
-          // MODALIDAD 1: Fijamos la Ganancia Neta Deseada
           netWin = inputValue;
 
           if (book.id === 'playdoit') {
@@ -332,7 +331,6 @@
             netReturn = grossReturn;
           }
         } else {
-          // MODALIDAD 2: Fijamos el Monto de Apuesta Fijo (Bet)
           requiredBet = inputValue;
 
           if (book.id === 'playdoit') {
@@ -369,7 +367,6 @@
 
       if (calculatedBooks.length > 0) {
         if (calcMode === 'toWin') {
-          // Buscamos el menor riesgo (Bet)
           let minBet = Math.min(...calculatedBooks.map(b => b.bet));
           let bestBooks = calculatedBooks.filter(b => Math.abs(b.bet - minBet) < 0.001);
           let names = bestBooks.map(b => b.name).join(" / ");
@@ -378,13 +375,12 @@
           bestLabelElem.innerText = "Menor Riesgo Requerido (Bet)";
           bestValueElem.innerText = `$${minBet.toFixed(2)} en Riesgo`;
         } else {
-          // Buscamos la mayor ganancia neta (Win)
           let maxWin = Math.max(...calculatedBooks.map(b => b.win));
           let bestBooks = calculatedBooks.filter(b => Math.abs(b.win - maxWin) < 0.001);
           let names = bestBooks.map(b => b.name).join(" / ");
 
           bestNameElem.innerText = names;
-          bestLabelElem.innerText = "Mayor Ganancia Neta Real";
+          bestLabelElem.innerText = "Mayor Ganancia Neta";
           bestValueElem.innerText = `$${maxWin.toFixed(2)} Ganados`;
         }
       } else {
